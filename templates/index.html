@@ -92,13 +92,14 @@
         }
 
         .search-input {
-            width: 300px;
+            width: 200px;
             padding: 8px;
             font-size: 16px;
             border: 1px solid #ffffff;
             border-radius: 5px;
             background-color: #333333;
             color: #ffffff; 
+            margin-right: 10px;
         }
 
         .search-btn {
@@ -122,6 +123,11 @@
         <h1 class="jobs-heading">JobsLIST</h1>
         <div class="search-container">
             <input type="text" id="search-input" class="search-input" placeholder="Enter job title...">
+            <input type="checkbox" id="checkbox-experience">
+            <label for="checkbox-experience">Искать по опыту "Без опыта"</label>
+            <input type="text" id="city-input" class="search-input" placeholder="Enter city...">
+            <input type="checkbox" id="checkbox-city">
+            <label for="checkbox-city">Фильтровать по городу</label>
             <button id="search-button" class="search-btn">Search</button>
         </div>
         <table id="jobs-table">
@@ -144,7 +150,15 @@
     <script>
         $(document).ready(function() {
             function fetchJobs() {
-                $.get("/get_jobs", function(data) {
+                let query = "/get_jobs";
+                let params = {};
+                if ($("#checkbox-experience").prop("checked")) {
+                    params.experience = "Без опыта";
+                }
+                if ($("#checkbox-city").prop("checked")) {
+                    params.city = $("#city-input").val();
+                }
+                $.get(query, params, function(data) {
                     let tableBody = $("#jobs-table tbody");
                     tableBody.empty();
                     data.forEach(function(job) {
@@ -165,7 +179,9 @@
 
             $("#search-button").click(function() {
                 let jobName = $("#search-input").val();
-                $.get("/update_jobs", { job_name_search: jobName }, function(data) {
+                let experience = $("#checkbox-experience").prop("checked") ? "Без опыта" : "";
+                let city = $("#checkbox-city").prop("checked") ? $("#city-input").val() : "";
+                $.get("/update_jobs", { job_name_search: jobName, experience: experience, city: city }, function(data) {
                     console.log(data.message);
                     fetchJobs();
                 }).fail(function(jqXHR, textStatus, errorThrown) {

@@ -22,10 +22,23 @@ def update_jobs():
 
 @app.route('/get_jobs')
 def get_jobs():
+    experience_filter = request.args.get('experience', None)
+    city_filter = request.args.get('city', None)
     try:
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM jobs")
+
+        query = "SELECT * FROM jobs WHERE 1=1"
+        params = []
+
+        if experience_filter == "Без опыта":
+            query += " AND Experience = 'Без опыта'"
+        
+        if city_filter:
+            query += " AND City = ?"
+            params.append(city_filter)
+
+        cursor.execute(query, params)
         jobs = cursor.fetchall()
         conn.close()
         return jsonify(jobs)
