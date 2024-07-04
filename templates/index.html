@@ -124,10 +124,13 @@
         <div class="search-container">
             <input type="text" id="search-input" class="search-input" placeholder="Enter job title...">
             <input type="checkbox" id="checkbox-experience">
-            <label for="checkbox-experience">Искать по опыту "Без опыта"</label>
+            <label for="checkbox-experience">Без опыта</label>
             <input type="text" id="city-input" class="search-input" placeholder="Enter city...">
             <input type="checkbox" id="checkbox-city">
             <label for="checkbox-city">Фильтровать по городу</label>
+            <input type="text" id="company-input" class="search-input" placeholder="Enter company...">
+            <input type="checkbox" id="checkbox-company">
+            <label for="checkbox-company">Фильтровать по компании</label>
             <button id="search-button" class="search-btn">Search</button>
         </div>
         <table id="jobs-table">
@@ -158,6 +161,9 @@
                 if ($("#checkbox-city").prop("checked")) {
                     params.city = $("#city-input").val();
                 }
+                if ($("#checkbox-company").prop("checked")) {
+                    params.company = $("#company-input").val();
+                }
                 $.get(query, params, function(data) {
                     let tableBody = $("#jobs-table tbody");
                     tableBody.empty();
@@ -181,7 +187,8 @@
                 let jobName = $("#search-input").val();
                 let experience = $("#checkbox-experience").prop("checked") ? "Без опыта" : "";
                 let city = $("#checkbox-city").prop("checked") ? $("#city-input").val() : "";
-                $.get("/update_jobs", { job_name_search: jobName, experience: experience, city: city }, function(data) {
+                let company = $("#checkbox-company").prop("checked") ? $("#company-input").val() : "";
+                $.get("/update_jobs", { job_name_search: jobName, experience: experience, city: city, company: company }, function(data) {
                     console.log(data.message);
                     fetchJobs();
                 }).fail(function(jqXHR, textStatus, errorThrown) {

@@ -24,6 +24,7 @@ def update_jobs():
 def get_jobs():
     experience_filter = request.args.get('experience', None)
     city_filter = request.args.get('city', None)
+    company_filter = request.args.get('company', None)
     try:
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
@@ -37,6 +38,10 @@ def get_jobs():
         if city_filter:
             query += " AND City = ?"
             params.append(city_filter)
+        
+        if company_filter:
+            query += " AND Company LIKE ?" 
+            params.append(f"%{company_filter}%")
 
         cursor.execute(query, params)
         jobs = cursor.fetchall()
@@ -44,6 +49,7 @@ def get_jobs():
         return jsonify(jobs)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)
