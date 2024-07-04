@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JobsLIST</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
+
+        body {
+            font-family: 'Fira Code', monospace;
+            background-color: #1a1a1a;
+            color: #ffffff; 
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #262626; 
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center; 
+        }
+
+        .jobs-heading {
+            font-size: 5em; 
+            color: #ffffff; 
+            font-weight: bold; 
+        }
+
+        .bold-text {
+            font-weight: bold;
+        }
+
+        .btn {
+            display: inline-block;
+            width: 150px;
+            margin: 20px 10px;
+            padding: 10px 20px;
+            background-color: #333333;
+            color: #ffffff;
+            border: 1px solid #ffffff;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background-color: #555555;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            table-layout: fixed;
+        }
+
+        th, td {
+            border: 1px solid #ffffff;
+            padding: 10px;
+            text-align: left;
+            color: #ffffff;
+        }
+
+        th {
+            background-color: #000000;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #333333;
+        }
+
+        tr:hover {
+            background-color: #444444;
+        }
+
+        a {
+            color: #ffffff;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .search-container {
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 300px;
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ffffff;
+            border-radius: 5px;
+            background-color: #333333;
+            color: #ffffff; 
+        }
+
+        .search-btn {
+            padding: 8px 20px;
+            margin-left: 10px;
+            background-color: #333333;
+            color: #ffffff;
+            border: 1px solid #ffffff;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .search-btn:hover {
+            background-color: #555555; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="jobs-heading">JobsLIST</h1>
+        <div class="search-container">
+            <input type="text" id="search-input" class="search-input" placeholder="Enter job title...">
+            <button id="search-button" class="search-btn">Search</button>
+        </div>
+        <table id="jobs-table">
+            <thead>
+                <tr>
+                    <th style="width: 15%;">Job Name</th>
+                    <th style="width: 15%;">Company</th>
+                    <th style="width: 10%;">Salary</th>
+                    <th style="width: 10%;">Experience</th>
+                    <th style="width: 10%;">City</th>
+                    <th style="width: 20%;">Job Link</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data will be inserted here by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            function fetchJobs() {
+                $.get("/get_jobs", function(data) {
+                    let tableBody = $("#jobs-table tbody");
+                    tableBody.empty();
+                    data.forEach(function(job) {
+                        let row = `<tr>
+                            <td>${job[0]}</td>
+                            <td>${job[1]}</td>
+                            <td>${job[2]}</td>
+                            <td>${job[3]}</td>
+                            <td>${job[4]}</td>
+                            <td><a href="${job[5]}" target="_blank">Link</a></td>
+                        </tr>`;
+                        tableBody.append(row);
+                    });
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    console.log("Error loading jobs: ", textStatus, errorThrown);
+                });
+            }
+
+            $("#search-button").click(function() {
+                let jobName = $("#search-input").val();
+                $.get("/update_jobs", { job_name_search: jobName }, function(data) {
+                    console.log(data.message);
+                    fetchJobs();
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    console.log("Error searching jobs: ", textStatus, errorThrown);
+                });
+            });
+
+            fetchJobs();
+            setInterval(fetchJobs, 4000);
+        });
+    </script>
+</body>
+</html>
