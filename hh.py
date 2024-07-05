@@ -1,7 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
 import sqlite3
-import pandas as pd
 
 db_file = "jobs.bd"
 job_name_search = "python"
@@ -46,7 +45,7 @@ def extr_max_page():
 
 def extr_hh_jobs(last_page):
 
-    conn = sqlite3.connect('/Users/malfurion/Desktop/Практика/Parser/jobs.db')
+    conn = sqlite3.connect('jobs.db')
     cursor = conn.cursor()
 
     cursor.execute('''
@@ -62,7 +61,7 @@ def extr_hh_jobs(last_page):
         results = soup.find_all("div", {"class": "vacancy-card--z_UXteNo7bRGzxWVcL7y font-inter"})
         for result in results:
 
-            conn = sqlite3.connect('/Users/malfurion/Desktop/Практика/Parser/jobs.db')
+            conn = sqlite3.connect('jobs.db')
             cursor = conn.cursor()
 
 

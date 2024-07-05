@@ -3,7 +3,7 @@ from hh import extr_max_page, extr_hh_jobs, update_job_name_search
 import sqlite3
 
 app = Flask(__name__)
-db_path = "/Users/malfurion/Desktop/Практика/Parser/jobs.db"
+db_path = "jobs.db"
 
 @app.route('/')
 def index():
